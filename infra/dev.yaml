@@ -1,0 +1,51 @@
+apiVersion: run.googleapis.com/v1
+kind: dev
+metadata:
+  name: data-info
+  namespace: default
+  labels:
+    cloud.googleapis.com/location: us-central1
+  annotations:
+    run.googleapis.com/launch-stage: GA
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/cloudsql-instances: "backend:us-central1:backend-database"
+        run.googleapis.com/vpc-access-connector: "task-vpc-connector"
+    spec:
+      parallelism: 1
+      taskCount: 1
+      template:
+        spec:
+          maxRetries: 3
+          timeoutSeconds: 600
+          serviceAccountName: backend-service-account@task.iam.gserviceaccount.com
+          containers:
+          - image: gcr.io/backend/data-info-image
+            command:
+            - python
+            - run_task.py
+            args:
+            - --input
+            - gs://bucket/input-data.json
+            - --output
+            - gs://bucket/output-data.json
+            env:
+            - name: DATABASE_URL
+              value: "postgres://backend_user:password@backend-database.us-central1.sql.googleapis.com:5432/task_db"
+            resources:
+              limits:
+                cpu: "1"
+                memory: "512Mi"
+          volumes:
+          - name: secret-volume
+            secret:
+              secretName: task-secret
+              items:
+              - key: SECRET_VERSION
+                path: secret-path
+          - name: empty-dir
+            emptyDir:
+              sizeLimit: 1Gi
+              medium: Memory

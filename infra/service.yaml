@@ -1,0 +1,54 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: default
+  labels:
+    cloud.googleapis.com/location: us-central1
+  annotations:
+    run.googleapis.com/launch-stage: GA
+    run.googleapis.com/description: "Backend"
+    run.googleapis.com/minScale: "1"
+    run.googleapis.com/cloudsql-instances: "backend:us-central1:backend-database"
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "1"
+        autoscaling.knative.dev/maxScale: "10"
+        run.googleapis.com/timeout: "300"
+    spec:
+      containerConcurrency: 80
+      serviceAccountName: backend-service-account@backend.iam.gserviceaccount.com
+      containers:
+      - image: gcr.io/backend/backend-image
+        name: backend-container
+        ports:
+        - name: http
+          containerPort: 8080
+        env:
+        - name: DATABASE_URL
+          value: "postgres://backend_user:paswword@backend-database.us-central1.sql.googleapis.com:5432/backend_db"
+        resources:
+          limits:
+            cpu: "1"
+            memory: "512Mi"
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 60
+          timeoutSeconds: 5
+          failureThreshold: 3
+          periodSeconds: 10
+  traffic:
+  - percent: 100
+    latestRevision: true
