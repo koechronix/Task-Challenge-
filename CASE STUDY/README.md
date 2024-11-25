@@ -112,10 +112,10 @@ C   - ache Maven dependencies to speed up builds.
 ## Question 4: API Management with ApigeeX
 # *Features to Leverage:*
 
-*Rate Limiting:* Protect the API from abuse.
-*Authentication:* Use OAuth 2.0 policies for secure user authentication.
-*Traffic Management:* Route traffic between environments (e.g., canary releases).
-*Monitoring:* Enable API analytics to track usage and errors.
+1.*Rate Limiting:* Protect the API from abuse.
+2.*Authentication:* Use OAuth 2.0 policies for secure user authentication.
+3.*Traffic Management:* Route traffic between environments (e.g., canary releases).
+4.*Monitoring:* Enable API analytics to track usage and errors.
 # Benefits:
 
 - Simplified authentication and authorization.
