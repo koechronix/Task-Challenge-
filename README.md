@@ -15,7 +15,7 @@ A **PostgreSQL** database instance (or a Kubernetes-based setup)
 **KIND** (for creating local Kubernetes clusters)
 
 ## Folder Structure
-
+```bash 
 task/
 ├── backend/                                  # Backend application
 │   ├── deployment/                           # Deployment configurations for backend
@@ -51,7 +51,7 @@ task/
 │   └── service.yaml                          # Kubernetes service configuration
 ├── Instructions.md                           # General project instructions or guidelines
 └── README.md                                 # Main project documentation
-
+```
 ## Deployment
 The deployment setup for this project is organized within specific directories for each component, including the backend, frontend, and infrastructure. The project accommodates both local and cloud-based deployment methods, with configurations designed to maintain uniformity across both environments.
 
